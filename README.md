@@ -1,9 +1,11 @@
 # Reverse Mermaid Hockey  
-![Image](https://raw.githubusercontent.com/Team-ARG-Museum/ID-31-RMH/master/art/banner-ID-31.png)
+![Image](https://raw.githubusercontent.com/T-arg/ID-31-RMH/master/art/banner-ID-31.png)
 
-Reverse Mermaid Hockey :  
-**Download latest Arduboy version and source :** https://github.com/Team-ARG-Museum/ID-31-RMH/releases/latest  
-MADE by TEAM a.r.g. : https://team-arg-museum.github.io/
+Reverse Mermaid Hockey :
+
+**Download latest Arduboy version and source :**
+
+MADE by TEAM a.r.g. : 
 
 2015 - DRAGULA96 - ART WORK: JO3RI & UNCLESPORKY
 
