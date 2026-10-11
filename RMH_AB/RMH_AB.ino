@@ -1,9 +1,9 @@
 /*
- REVERSE MARMAID HOCKEY: http://www.team-arg.org/rmh-manual.html
+ REVERSE MARMAID HOCKEY: https://t-arg.github.io/ID-31-RMH/
 
- Arduboy version 1.4 : http://www.team-arg.org/rmh-downloads.html
+ Arduboy version 1.4 : https://github.com/T-arg/ID-31-RMH
  
- MADE by TEAM a.r.g. : http://www.team-arg.org/more-about.html
+ MADE by TEAM a.r.g. : https://t-arg.github.io/
 
  2015 - DRAGULA96 - ART WORK: JO3RI & UNCLESPORKY
 
