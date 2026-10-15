@@ -1,11 +1,13 @@
 /*
  REVERSE MARMAID HOCKEY: https://t-arg.github.io/ID-31-RMH/
 
- Arduboy version 1.4 : https://github.com/T-arg/ID-31-RMH
+ Arduboy version 2.0 : https://github.com/T-arg/ID-31-RMH
  
  MADE by TEAM a.r.g. : https://t-arg.github.io/
 
  2015 - DRAGULA96 - ART WORK: JO3RI & UNCLESPORKY
+
+ 2026 - MUSIC and SOUND EFFECTS - JO3RI
 
  Game License: MIT : https://opensource.org/licenses/MIT
 
@@ -30,6 +32,7 @@ const FunctionPointer PROGMEM mainGameLoop[] = {
   stateMenuPlay,
   stateMenuInfo,
   stateMenuSoundfx,
+  stateMenuJbox,
   stateGameInitLevel,
   stateGamePlaying,
   stateGamePause,
@@ -40,7 +43,8 @@ const FunctionPointer PROGMEM mainGameLoop[] = {
 
 void setup()
 {
-  arduboy.begin();
+  arduboy.boot();
+  arduboy.audio.begin();
   arduboy.setFrameRate(30);
   arduboy.initRandomSeed();
 }
@@ -51,6 +55,7 @@ void loop()
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
   arduboy.clear();
+  musicUpdate();
   ((FunctionPointer) pgm_read_word (&mainGameLoop[gameState]))();
   arduboy.display();
 }

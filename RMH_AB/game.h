@@ -50,40 +50,28 @@ void stateGamePlaying()
 
   if (arduboy.justPressed(A_BUTTON))
   {
-    arduboy.clear();
     gameState = STATE_GAME_PAUSE;
+    sfx(sfxPause);
   }
 
 };
 
 void stateGamePause()
 {
-  for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 0, menuPause, i);
-  if (arduboy.justPressed(A_BUTTON)) gameState = STATE_GAME_PLAYING ;
+  drawLz(pauseLz, 1024);
+  if (arduboy.justPressed(A_BUTTON))
+  {
+    gameState = STATE_GAME_PLAYING;
+    sfx(sfxPause);
+  }
 };
+
+const uint8_t *const endScreens[] PROGMEM = { fishWomanLz, fishCompleteLz, fishMermaidLz, fishStickLz };
 
 void stateGameOver()
 {
-  if (AIScore == scoreMax)
-  {
-    for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 0, fishStick, i);
-  }
-  if (playerScore == scoreMax)
-  {
-    switch (winlose)
-    {
-      case 0:
-        for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 0, fishWoman, i);
-        break;
-      case 1:
-        for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 0, fishComplete, i);
-        break;
-      case 2:
-        for (byte i = 0; i < 4; i++) sprites.drawSelfMasked(32 * i, 0, fishMermaid, i);
-        break;
-    }
-  }
-
+  // the fish sticks if the AI won, else one of the three happy endings
+  drawLz((const uint8_t *)pgm_read_word(&endScreens[AIScore > playerScore ? 3 : winlose]), 1024);
   if (arduboy.justPressed(A_BUTTON | B_BUTTON)) gameState = STATE_MENU_MAIN;
 };
 

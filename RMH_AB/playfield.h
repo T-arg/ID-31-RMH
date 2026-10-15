@@ -9,11 +9,6 @@
 #define KICKING_POSTURE          1
 #define HIT_IN_FACE_POSTURE      2
 
-//define sound tones
-#define KICK_TONE                500
-#define SCORE_TONE               175
-#define WALL_TONE                80
-#define FACE_TONE                50
 #define SUPERKICK_MAX            20
 
 byte ballState = 0;
@@ -80,8 +75,13 @@ void checkAnimations()
 
 void superKickMeterAdd(byte amnt_)
 {
+  byte old = superKickMeter;
   superKickMeter += amnt_;
-  if (superKickMeter > SUPERKICK_MAX) superKickMeter = SUPERKICK_MAX;
+  if (superKickMeter >= SUPERKICK_MAX)
+  {
+    superKickMeter = SUPERKICK_MAX;
+    if (old < SUPERKICK_MAX) sfx(sfxReady);                  // the meter just became full
+  }
 }
 
 
@@ -97,6 +97,7 @@ void checkSuperKickCollisions()
     ball.xSpeed = 10;
     ball.ySpeed = 0;
     isSuperkicking = true;
+    sfx(sfxSuper);
   }
 }
 
@@ -129,7 +130,7 @@ void checkCollisions()
       playerState = KICKING_POSTURE;
       playerAnimateTimer = 10;
       superKickMeterAdd(10);
-      sound.tone(KICK_TONE, 100);
+      sfx(sfxKick);
       if (ball.xSpeed < 0) ball.xSpeed --; //if ball is going left speed up ball
 
       if (ball.ySpeed < 0) // if ball is going up
@@ -139,7 +140,7 @@ void checkCollisions()
 
     if (point.y < rect.y + 8) { // if ball is on the top side
       //change state to hitInTheFace
-      sound.tone(FACE_TONE, 100);
+      sfx(sfxFace);
       playerState = HIT_IN_FACE_POSTURE;
       playerAnimateTimer = 15;
       if (ball.ySpeed > 0) // if ball is going down
@@ -176,7 +177,7 @@ void checkCollisions()
     if (point.y < rect.y + 20) { // if ball is on the bottom side
       //change state to kicking
       AIstate = KICKING_POSTURE;
-      sound.tone(KICK_TONE, 100);
+      sfx(sfxKick);
       if (ball.xSpeed > 0) ball.xSpeed ++ ; //if ball is going right speed up ball
       if (ball.ySpeed < 0) // if ball is going up
         ball.ySpeed *= -1;  //revers the y speed
@@ -185,7 +186,7 @@ void checkCollisions()
 
     if (point.y < rect.y + 4) { // if ball is on the top side
       //change state to hitInTheFace
-      sound.tone(FACE_TONE, 100);
+      sfx(sfxFace);
       AIstate = HIT_IN_FACE_POSTURE;
       if (ball.ySpeed > 0) // if ball is going down
         ball.ySpeed *= -1;  //revers the y speed
@@ -236,44 +237,22 @@ void setupGame() {
 void checkIfScored() {
   Rect rect;
   Point point;
-  byte goalSize = 12;
   point.x = ball.x + 3; point.y = ball.y + 3;
+  rect.width = 12; rect.height = 12;
 
-  //check upper right corner
-  rect.x = 0; rect.y = 0; rect.width = goalSize; rect.height = goalSize;
-  if (arduboy.collide(point, rect))
+  // the four corners: bit 0 = right side, bit 1 = bottom (the left corners are the AI's goals, the right ones are yours)
+  for (byte i = 0; i < 4; i++)
   {
-    sound.tone(SCORE_TONE, 100);
-    AIScore ++;
-    setupGame();
+    rect.x = (i & 1) ? WIDTH - 12 : 0;
+    rect.y = (i & 2) ? HEIGHT - 12 : 0;
+    if (arduboy.collide(point, rect))
+    {
+      sfx(sfxScore);
+      if (i & 1) playerScore ++;
+      else AIScore ++;
+      setupGame();
+    }
   }
-  //check lower right corner
-  rect.x = 0; rect.y = HEIGHT - goalSize; rect.width = goalSize; rect.height = goalSize;
-  if (arduboy.collide(point, rect))
-  {
-    sound.tone(SCORE_TONE, 100);
-    AIScore ++;
-    setupGame();
-  }
-
-  //check upper left corner
-  rect.x = WIDTH - goalSize; rect.y = 0; rect.width = goalSize; rect.height = goalSize;
-  if (arduboy.collide(point, rect))
-  {
-    sound.tone(SCORE_TONE, 100);
-    playerScore ++;
-    setupGame();
-  }
-
-  //check lower left corner
-  rect.x = WIDTH - goalSize; rect.y = HEIGHT - goalSize; rect.width = goalSize; rect.height = goalSize;
-  if (arduboy.collide(point, rect))
-  {
-    sound.tone(SCORE_TONE, 100);
-    playerScore ++;
-    setupGame();
-  }
-
 }
 
 void drawScores()
@@ -303,14 +282,14 @@ void moveBall()
     //IF BALL HITS LEFT WALL
     if (ball.x < 4)
     {
-      sound.tone(WALL_TONE, 100);
+      sfx(sfxWall);
       ball.x = oldX;
       ball.xSpeed *= -1;
     }
     //IF BALL HITS RIGHT WALL
     if (ball.x + ball.width > WIDTH - 4 )
     {
-      sound.tone(WALL_TONE, 100);
+      sfx(sfxWall);
       ball.x = oldX;
       if (!isSuperkicking) {
         ball.xSpeed *= -1;
@@ -324,14 +303,14 @@ void moveBall()
     //IF BALL HITS TOP WALL
     if (ball.y < 4)
     {
-      sound.tone(WALL_TONE, 100);
+      sfx(sfxWall);
       ball.y = oldY;
       ball.ySpeed *= -1;
     }
     //IF BALL HITS BOTTOM WALL
     if (ball.y + ball.height > HEIGHT )
     {
-      sound.tone(WALL_TONE, 100);
+      sfx(sfxWall);
       ball.y = oldY;
       ball.ySpeed *= -1;
     }
